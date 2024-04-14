@@ -1,14 +1,17 @@
 package com.example.projectAlphaCentauri.controllers;
 
-import ch.qos.logback.core.model.Model;
+
+import com.example.projectAlphaCentauri.model.AlphaCentauri;
 import com.example.projectAlphaCentauri.service.AlphaCentauriService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Controller
+import java.io.IOException;
+
+@RestController
+//@Controller
 public class AlphaCentauriController {
 
     public final AlphaCentauriService alphaCentauriService;
@@ -18,14 +21,31 @@ public class AlphaCentauriController {
     }
 
     @GetMapping("/")
-    public String makeAC(@RequestParam ("alphacentauri") String username, Model model) {
-        model.addText("makeAC");
+    public String makeAC(@RequestParam(name = "username", required = false) String username, Model model) {
+        model.addAttribute("makeAC", alphaCentauriService.alphaCentauriList(username));
         return "home";
-
     }
-    @PostMapping("/reg_form")
-    public String postM(@RequestParam("password") Model model) {
-        model.hashCode();
-        return "/redirect";
+
+    @GetMapping("/alphacentauri/{id}")
+    public String alphaCentauriInfo(@PathVariable Long id, Model model) {
+        AlphaCentauri alphaCentauri = alphaCentauriService.getAlphaCentauriById(id);
+        model.addAttribute("alphacentauri", alphaCentauri);
+        model.addAttribute("images", alphaCentauri.getImages());
+        return "info";
+    }
+
+
+    @PostMapping("/alphacentauri/")
+    public String postM(@RequestParam("file1") MultipartFile file1, AlphaCentauri alphaCentauri) throws IOException {
+        alphaCentauriService.saveAlphaCentauri(alphaCentauri, file1);
+
+        return "info";
+    }
+    @CrossOrigin
+    @PostMapping("/login_form")
+    public String sU(@RequestBody AlphaCentauri alphaCentauri) {
+        System.out.printf("saving %s", alphaCentauri);
+        return "login_form";
     }
 }
+
