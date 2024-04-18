@@ -1,4 +1,4 @@
-package com.example.projectAlphaCentauri.model;
+package com.example.projectAlphaCentauri.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,8 +23,7 @@ public class AlphaCentauri {
     @Column(name = "password")
     private String password;  //пароль
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "alphaCentauri")
-    private List<Image> images = new ArrayList<>();
+
 
     private LocalDateTime dateOfCreated;
 
@@ -33,10 +32,7 @@ public class AlphaCentauri {
     @PrePersist
     private void init() { dateOfCreated = LocalDateTime.now(); }
 
-    public void addImageToAlphaCentauri(Image image) {
-        image.setAlphaCentauri(this);
-        images.add(image);
-    }
+
     public long getId() {
         return id;
     }
@@ -61,13 +57,7 @@ public class AlphaCentauri {
         this.password = password;
     }
 
-    public List<Image> getImages() {
-        return images;
-    }
 
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
 
     public LocalDateTime getDateOfCreated() {
         return dateOfCreated;
